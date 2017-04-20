@@ -39,3 +39,15 @@ func TestGetInsurances(t *testing.T) {
 	log.WithFields(logrus.Fields{}).Debugf("============Insurances: %+v\n", insurance)
 
 }
+func TestGetInsurance(t *testing.T) {
+	var insurance *Insurance
+	var err error
+	insurance, err = api.Insurance(TestInsuranceID)
+
+	if err != nil {
+		log.WithFields(logrus.Fields{}).Debugf("Error saving insurance in api_test: %s", err)
+	}
+
+	log.WithFields(logrus.Fields{}).Debugf("============Insurances: %+v\n", insurance)
+
+}
