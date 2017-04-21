@@ -12,5 +12,4 @@ type User struct {
 	Secondary_Recharge_Amount string  `json:"secondary_recharge_amount,omitempty"` //USD formatted dollars and cents, delimited by a decimal point
 	Recharge_Threshold        string  `json:"recharge_threshold,omitempty"`        //Number of cents USD that when your balance drops below, we automatically recharge your account with your primary payment method.
 	Children                  []*User `json:"children,omitempty"`                  //All associated children
-
 }

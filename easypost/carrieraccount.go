@@ -1,5 +1,7 @@
 package easypost
 
+import "time"
+
 type CarrierAccount struct {
 	Id               string                `json:"id,omitempty"`               //Unique, begins with "ca_"
 	Object           string                `json:"object,omitempty"`           //"CarrierAccount"
@@ -9,18 +11,18 @@ type CarrierAccount struct {
 	Description      string                `json:"description,omitempty"`      //An optional, user-readable field to help distinguish accounts
 	Reference        string                `json:"reference,omitempty"`        //An optional field that may be used in place of carrier_account_id in other API endpoints
 	Readable         string                `json:"readable,omitempty"`         //The name used when displaying a readable value for the type of the account
-	Credentials      object                `json:"credentials,omitempty"`      //Unlike the "credentials" object contained in "fields", this nullable object contains just raw credential pairs for client library consumption
-	Test_Credentials object                `json:"test_credentials,omitempty"` //Unlike the "test_credentials" object contained in "fields", this nullable object contains just raw test_credential pairs for client library consumption
-	Created_At       datetime              `json:"created_at,omitempty"`       //
-	Updated_At       datetime              `json:"updated_at,omitempty"`       //
+	Credentials      *CarrierAccountFields `json:"credentials,omitempty"`      //Unlike the "credentials" object contained in "fields", this nullable object contains just raw credential pairs for client library consumption
+	Test_Credentials *CarrierAccountFields `json:"test_credentials,omitempty"` //Unlike the "test_credentials" object contained in "fields", this nullable object contains just raw test_credential pairs for client library consumption
+	Created_At       time.Time             `json:"created_at,omitempty"`       //
+	Updated_At       time.Time             `json:"updated_at,omitempty"`       //
 
 }
 
 type CarrierAccountFields struct {
 	Credentials      *CarrierAccountField `json:"credentials,omitempty"`      //Credentials used in the production environment.
 	Test_Credentials *CarrierAccountField `json:"test_credentials,omitempty"` //Credentials used in the test environment.
-	Auto_Link        boolean              `json:"auto_link,omitempty"`        //For USPS this designates that no credentials are required.
-	Custom_Workflow  boolean              `json:"custom_workflow,omitempty"`  //When present, a seperate authentication process will be required through the UI to link this account type.
+	Auto_Link        bool                 `json:"auto_link,omitempty"`        //For USPS this designates that no credentials are required.
+	Custom_Workflow  bool                 `json:"custom_workflow,omitempty"`  //When present, a seperate authentication process will be required through the UI to link this account type.
 }
 
 type CarrierAccountField struct {

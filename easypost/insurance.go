@@ -67,6 +67,7 @@ func (api *API) Insurances(before_id string, after_id string, start_datetime tim
 	return &result, nil
 
 }
+
 func (api *API) Insurance(id string) (*Insurance, error) {
 	endpoint := fmt.Sprintf("/insurances/%s", id)
 
