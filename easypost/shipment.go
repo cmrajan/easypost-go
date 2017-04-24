@@ -23,7 +23,7 @@ type Shipment struct {
 	Scan_Form      *ScanForm    `json:"scan_form,omitempty"`      //Document created to manifest and scan multiple shipments
 	Forms          []*ScanForm  `json:"forms,omitempty"`          //All associated Form objects
 	Insurance      *Insurance   `json:"insurance,omitempty"`      //The associated Insurance object
-	Rates          []*Rate      `json:"rates,omitempty"`          //All associated Rate objects
+	Rates          []Rate       `json:"rates,omitempty"`          //All associated Rate objects
 	Selected_Rate  *Rate        `json:"selected_rate,omitempty"`  //The specific rate purchased for the shipment, or null if unpurchased or purchased through another mechanism
 	Postage_Label  string       `json:"postage_label,omitempty"`  //TBD *PostageLabel //The associated PostageLabel object
 	Messages       []*Message   `json:"messages,omitempty"`       //Any carrier errors encountered during rating, discussed in more depth below
@@ -191,7 +191,7 @@ func (obj *Shipment) Save() error {
 }
 
 func (obj *Shipment) Buy(id string) error {
-	endpoint := "shipments/%s/buy"
+	endpoint := fmt.Sprintf("shipments/%s/buy", id)
 
 	buf := &bytes.Buffer{}
 	err := json.NewEncoder(buf).Encode(obj)
@@ -203,6 +203,90 @@ func (obj *Shipment) Buy(id string) error {
 		return err
 	}
 	res, status, err := obj.api.request(endpoint, "POST", nil, buf)
+
+	if err != nil {
+		return err
+	}
+
+	if status != 201 { //not created status
+
+		r := errorResponse{}
+		err = json.NewDecoder(res).Decode(&r)
+		if err == nil {
+			log.WithFields(logrus.Fields{}).Debugf("Status %d: %+v", status, r.Errors)
+
+			return fmt.Errorf("Status %d: %+v", status, r.Errors)
+		}
+		return err
+
+	}
+
+	r := Shipment{}
+	err = json.NewDecoder(res).Decode(&r)
+	if err != nil {
+
+		return err
+	}
+	*obj = r
+
+	return nil
+}
+
+func (obj *Shipment) Label(id string) error {
+
+	endpoint := fmt.Sprintf("shipments/%s/label", id)
+	buf := &bytes.Buffer{}
+	err := json.NewEncoder(buf).Encode(obj)
+
+	log.WithFields(logrus.Fields{}).Debug(buf)
+
+	if err != nil {
+		log.WithFields(logrus.Fields{}).Debug("Error in JSON")
+		return err
+	}
+	res, status, err := obj.api.request(endpoint, "GET", nil, buf)
+
+	if err != nil {
+		return err
+	}
+
+	if status != 201 { //not created status
+
+		r := errorResponse{}
+		err = json.NewDecoder(res).Decode(&r)
+		if err == nil {
+			log.WithFields(logrus.Fields{}).Debugf("Status %d: %+v", status, r.Errors)
+
+			return fmt.Errorf("Status %d: %+v", status, r.Errors)
+		}
+		return err
+
+	}
+
+	r := Shipment{}
+	err = json.NewDecoder(res).Decode(&r)
+	if err != nil {
+
+		return err
+	}
+	*obj = r
+
+	return nil
+}
+
+func (obj *Shipment) GetRates(id string) error {
+
+	endpoint := fmt.Sprintf("shipments/%s/rates", id)
+	buf := &bytes.Buffer{}
+	err := json.NewEncoder(buf).Encode(obj)
+
+	log.WithFields(logrus.Fields{}).Debug(buf)
+
+	if err != nil {
+		log.WithFields(logrus.Fields{}).Debug("Error in JSON")
+		return err
+	}
+	res, status, err := obj.api.request(endpoint, "GET", nil, buf)
 
 	if err != nil {
 		return err

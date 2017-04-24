@@ -22,27 +22,13 @@ func TestShipment(t *testing.T) {
 
 	err := shipment.Save()
 	if err != nil {
-		log.WithFields(logrus.Fields{}).Debugf("Error saving insurance in api_test: %s", err)
+		log.WithFields(logrus.Fields{}).Debugf("Error saving shipment in api_test: %s", err)
 	}
-	log.WithFields(logrus.Fields{}).Debugf("New insurance ID Created: %s\n", shipment.Id)
+	log.WithFields(logrus.Fields{}).Debugf("New shipment ID Created: %s\n", shipment.Id)
 
 	TestShipmentID = shipment.Id
 
 }
-
-// func TestGetInsurances(t *testing.T) {
-// 	var insurance *Insurances
-// 	var err error
-// 	insurance, err = api.Insurances("zzz", "aaa", time.Now(), time.Now(), 1)
-
-// 	if err != nil {
-// 		log.WithFields(logrus.Fields{}).Debugf("Error saving insurance in api_test: %s", err)
-// 	}
-// 	// log.WithFields(logrus.Fields{}).Debugf("New insurance ID Created: %s\n", insurance.ID)
-
-// 	log.WithFields(logrus.Fields{}).Debugf("============Insurances: %+v\n", insurance)
-
-// }
 
 func TestGetShipment(t *testing.T) {
 	var shipment *Shipment
@@ -53,7 +39,7 @@ func TestGetShipment(t *testing.T) {
 		log.WithFields(logrus.Fields{}).Debugf("Error saving shipment in api_test: %s", err)
 	}
 
-	log.WithFields(logrus.Fields{}).Debugf("============Insurances: %+v\n", shipment)
+	log.WithFields(logrus.Fields{}).Debugf("============Shipment: %+v\n", shipment)
 
 }
 
@@ -61,17 +47,48 @@ func TestShipmentBuy(t *testing.T) {
 
 	shipment := api.NewShipment()
 
-	shipment.Rates = &Rate{}
-	shipment.Insurance = "100.00"
+	shipment.Rates = []Rate{
+		Rate{Id: "rate_eerererer"},
+	}
+	shipment.Insurance = &Insurance{Amount: "100.00"}
 
 	//   -d 'shipment[customs_info][id]=cstinfo_...'
 
-	err := shipment.Save()
+	err := shipment.Buy(TestShipmentID)
 	if err != nil {
-		log.WithFields(logrus.Fields{}).Debugf("Error saving insurance in api_test: %s", err)
+		log.WithFields(logrus.Fields{}).Debugf("Error saving Shipment in api_test: %s", err)
 	}
-	log.WithFields(logrus.Fields{}).Debugf("New insurance ID Created: %s\n", shipment.Id)
+	log.WithFields(logrus.Fields{}).Debugf("New Shipment ID Created: %s\n", shipment.Id)
 
 	TestShipmentID = shipment.Id
+	log.WithFields(logrus.Fields{}).Debugf("============Shipment- Buy: %+v\n", shipment)
+
+}
+
+func TestShipmentLabel(t *testing.T) {
+
+	shipment := api.NewShipment()
+
+	err := shipment.Label(TestShipmentID)
+	if err != nil {
+		log.WithFields(logrus.Fields{}).Debugf("Error saving Shipment in api_test: %s", err)
+	}
+
+	TestShipmentID = shipment.Id
+	log.WithFields(logrus.Fields{}).Debugf("============Shipment- Label: %+v\n", shipment)
+
+}
+
+func TestShipmentGetRates(t *testing.T) {
+
+	shipment := api.NewShipment()
+
+	err := shipment.GetRates(TestShipmentID)
+	if err != nil {
+		log.WithFields(logrus.Fields{}).Debugf("Error saving Shipment in api_test: %s", err)
+	}
+
+	TestShipmentID = shipment.Id
+	log.WithFields(logrus.Fields{}).Debugf("============Shipment- Rates: %+v\n", shipment)
 
 }
